@@ -1,0 +1,56 @@
+---
+title: "EASY TEST SOLUTION NLDR"
+author: "Afraaz Ali"
+date: "2025-03-25"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Load Libraries
+
+```{r}
+library(liminal)
+library(ggplot2)
+library(Rtsne)
+library(dplyr)
+library(palmerpenguins)
+```
+
+## Load and Process Data
+
+```{r}
+penguins_data <- na.omit(palmerpenguins::penguins)
+```
+
+## Compute t-SNE Embedding
+
+```{r}
+set.seed(123)
+tsne_outcome <- Rtsne(penguins_data[, c("bill_length_mm", "bill_depth_mm", "flipper_length_mm", "body_mass_g")])
+```
+
+## Prepare Data for Visualization
+
+```{r}
+tsne_mapped <- data.frame(
+  x_dim = tsne_outcome$Y[,1],
+  y_dim = tsne_outcome$Y[,2],
+  category = penguins_data$species
+)
+
+tour_inputs <- penguins_data[, c("bill_length_mm", "bill_depth_mm", "flipper_length_mm", "body_mass_g", "species")]
+```
+
+## Generate Linked Visualization
+
+```{r}
+limn_tour_link(
+  embed_data = tsne_mapped,
+  tour_data = tour_inputs,
+  cols = c("bill_length_mm", "bill_depth_mm", "flipper_length_mm", "body_mass_g"),
+  color = "category"
+)
+
